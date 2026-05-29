@@ -269,3 +269,99 @@ def ingest_documents(docs_path: str = None) -> Dict[str, Any]:
     )
 
     return stats
+
+
+def ingest_single_document(pdf_path: str) -> Dict[str, Any]:
+    """
+    Ingest a single PDF document.
+    Extracts, chunks, embeds, and stores in ChromaDB.
+    """
+    settings = get_settings()
+    logger = get_logger()
+    filename = os.path.basename(pdf_path)
+
+    logger.info(f"Starting single document ingestion for: {filename}")
+    start_time = time.time()
+
+    # Initialize services
+    embedding_service = EmbeddingService()
+
+    # Initialize ChromaDB
+    chroma_client = chromadb.PersistentClient(path=settings.chroma_db_path)
+    collection = chroma_client.get_or_create_collection(
+        name=settings.chroma_collection_name,
+        metadata={"description": "SWS AI company documents"},
+    )
+
+    stats = {
+        "filename": filename,
+        "pages": 0,
+        "chunks": 0,
+        "new_chunks": 0,
+        "skipped_chunks": 0,
+        "elapsed_seconds": 0,
+    }
+
+    # Step 1: Extract text
+    pages = extract_text_from_pdf(pdf_path)
+    if not pages:
+        raise ValueError(f"No text could be extracted from: {filename}")
+
+    stats["pages"] = len(pages)
+
+    # Step 2: Chunk the text
+    chunks = chunk_text(
+        pages,
+        chunk_size=settings.chunk_size,
+        chunk_overlap=settings.chunk_overlap,
+    )
+    stats["chunks"] = len(chunks)
+
+    # Step 3: Build candidate IDs
+    candidate_ids = []
+    candidate_texts = []
+    candidate_metadatas = []
+
+    for chunk in chunks:
+        chunk_id = generate_chunk_id(
+            chunk["metadata"]["source"],
+            chunk["metadata"]["chunk_index"],
+            chunk["text"],
+        )
+        candidate_ids.append(chunk_id)
+        candidate_texts.append(chunk["text"])
+        candidate_metadatas.append(chunk["metadata"])
+
+    # Step 4: Duplicate Check
+    existing_result = collection.get(ids=candidate_ids)
+    existing_ids = set(existing_result["ids"])
+
+    new_ids = []
+    new_texts = []
+    new_metadatas = []
+
+    for chunk_id, text, metadata in zip(
+        candidate_ids, candidate_texts, candidate_metadatas
+    ):
+        if chunk_id in existing_ids:
+            stats["skipped_chunks"] += 1
+        else:
+            new_ids.append(chunk_id)
+            new_texts.append(text)
+            new_metadatas.append(metadata)
+
+    # Step 5: Embed & Store
+    if new_ids:
+        embeddings = embedding_service.encode(new_texts)
+        collection.add(
+            ids=new_ids,
+            documents=new_texts,
+            embeddings=embeddings,
+            metadatas=new_metadatas,
+        )
+        stats["new_chunks"] = len(new_ids)
+
+    stats["elapsed_seconds"] = round(time.time() - start_time, 2)
+    logger.info(f"Ingested {filename} in {stats['elapsed_seconds']}s. New chunks: {stats['new_chunks']}")
+    return stats
+

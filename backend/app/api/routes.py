@@ -3,15 +3,17 @@ API Routes for the RAG Chatbot.
 Provides endpoints for chat, document ingestion, and health checks.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 import asyncio
+import os
+import shutil
 
 from app.services.rag_service import RAGService
 from app.services.llm_service import LLMService
-from app.ingestion.ingest import ingest_documents
+from app.ingestion.ingest import ingest_documents, ingest_single_document
 from app.core.config import get_settings
 from app.core.logging_config import get_logger
 
@@ -169,3 +171,53 @@ async def health():
         model=settings.ollama_model,
         collection_count=count,
     )
+
+
+@router.post(
+    "/upload",
+    summary="Upload PDF Document",
+)
+async def upload_document(file: UploadFile = File(...)):
+    """
+    Upload a PDF document dynamically to add it to the RAG database.
+    Extracts text, chunks, embeds, and stores in ChromaDB.
+    """
+    logger = get_logger()
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file format. Only PDF files are supported."
+        )
+
+    logger.info(f"File upload request received: {file.filename}")
+
+    # Ensure a temp directory exists
+    temp_dir = "./temp_uploads"
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_file_path = os.path.join(temp_dir, file.filename)
+
+    try:
+        # Save uploaded file content to disk temporarily
+        with open(temp_file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # Ingest the document using a background thread
+        stats = await asyncio.to_thread(ingest_single_document, temp_file_path)
+        return {
+            "status": "success",
+            "message": f"Successfully ingested {file.filename}",
+            "stats": stats
+        }
+    except Exception as e:
+        logger.error(f"Failed to ingest uploaded document {file.filename}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to ingest document: {str(e)}"
+        )
+    finally:
+        # Clean up temp file
+        if os.path.exists(temp_file_path):
+            try:
+                os.remove(temp_file_path)
+            except Exception as cleanup_err:
+                logger.warning(f"Could not delete temp file {temp_file_path}: {cleanup_err}")

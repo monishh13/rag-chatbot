@@ -14,105 +14,168 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="app-container" id="app-container">
-        <!-- Header -->
-        <header class="app-header" id="app-header">
-            <div class="header-content">
-                <div class="header-brand">
-                    <div class="logo-icon" id="logo-icon">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <path d="M9 14.5L12.5 18L19 11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="header-text">
-                        <h1 id="app-title">SWS AI Assistant</h1>
-                        <p class="header-subtitle" id="app-subtitle">Company Knowledge Base</p>
-                    </div>
-                </div>
-                <div class="header-actions">
-                    <div class="status-indicator" id="status-indicator">
-                        <span class="status-dot" id="status-dot"></span>
-                        <span class="status-text" id="status-text">Connecting...</span>
-                    </div>
-                    <button class="btn-icon" id="btn-clear" title="Clear conversation" aria-label="Clear conversation">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Chat Area -->
-        <main class="chat-area" id="chat-area">
-            <!-- Welcome screen -->
-            <div class="welcome-screen" id="welcome-screen">
-                <div class="welcome-icon">
-                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="28" cy="28" r="24" stroke="url(#grad1)" stroke-width="2.5" fill="none" opacity="0.6"/>
-                        <circle cx="28" cy="28" r="16" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3"/>
-                        <path d="M22 28.5L26 32.5L34 24" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <defs>
-                            <linearGradient id="grad1" x1="0" y1="0" x2="56" y2="56">
-                                <stop offset="0%" stop-color="#2563EB"/>
-                                <stop offset="100%" stop-color="#7C3AED"/>
-                            </linearGradient>
-                        </defs>
+    <div class="workspace-container">
+        <!-- Sidebar for Chat History -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <button class="btn-new-chat" id="btn-new-chat">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
+                    New Chat
+                </button>
+            </div>
+            <div class="sidebar-history" id="sidebar-history">
+                <div class="history-empty">No past conversations</div>
+            </div>
+        </aside>
+
+        <!-- Main App Wrapper -->
+        <div class="app-container" id="app-container">
+            <!-- Header -->
+            <header class="app-header" id="app-header">
+                <div class="header-content">
+                    <div class="header-brand">
+                        <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Toggle Sidebar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                        <div class="logo-icon" id="logo-icon">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M9 14.5L12.5 18L19 11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="header-text">
+                            <h1 id="app-title">SWS AI Assistant</h1>
+                            <p class="header-subtitle" id="app-subtitle">Company Knowledge Base</p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Tabs -->
+                    <div class="header-tabs">
+                        <button class="tab-button active" data-tab="chat">Chat</button>
+                        <button class="tab-button" data-tab="upload">Upload Documents</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="status-indicator" id="status-indicator">
+                            <span class="status-dot" id="status-dot"></span>
+                            <span class="status-text" id="status-text">Connecting...</span>
+                        </div>
+                        <button class="btn-icon" id="btn-clear" title="Clear conversation" aria-label="Clear conversation">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <h2 class="welcome-title">Welcome to SWS AI Assistant</h2>
-                <p class="welcome-desc">Ask me anything about company policies, HR guidelines, leave policies, IT security, and more. I'll find the answer from our internal documents.</p>
-                <div class="suggestions" id="suggestions">
-                    <button class="suggestion-chip" data-query="What is the annual leave policy at SWS AI?">
-                        📋 Annual leave policy
-                    </button>
-                    <button class="suggestion-chip" data-query="What is the password policy for company systems?">
-                        🔒 Password policy
-                    </button>
-                    <button class="suggestion-chip" data-query="What are the WFH guidelines?">
-                        🏠 WFH guidelines
-                    </button>
-                    <button class="suggestion-chip" data-query="What is the notice period for resignation?">
-                        📝 Resignation notice period
-                    </button>
-                    <button class="suggestion-chip" data-query="How many days of sick leave do employees get?">
-                        🏥 Sick leave days
-                    </button>
-                    <button class="suggestion-chip" data-query="How are performance reviews conducted?">
-                        ⭐ Performance reviews
-                    </button>
-                </div>
+            </header>
+
+            <!-- Chat Panel -->
+            <div class="panel active" id="chat-panel">
+                <main class="chat-area" id="chat-area">
+                    <!-- Welcome screen -->
+                    <div class="welcome-screen" id="welcome-screen">
+                        <div class="welcome-icon">
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="28" cy="28" r="24" stroke="url(#grad1)" stroke-width="2.5" fill="none" opacity="0.6"/>
+                                <circle cx="28" cy="28" r="16" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3"/>
+                                <path d="M22 28.5L26 32.5L34 24" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs>
+                                    <linearGradient id="grad1" x1="0" y1="0" x2="56" y2="56">
+                                        <stop offset="0%" stop-color="#2563EB"/>
+                                        <stop offset="100%" stop-color="#7C3AED"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <h2 class="welcome-title">Welcome to SWS AI Assistant</h2>
+                        <p class="welcome-desc">Ask me anything about company policies, HR guidelines, leave policies, IT security, and more. I'll find the answer from our internal documents.</p>
+                        <div class="suggestions" id="suggestions">
+                            <button class="suggestion-chip" data-query="What is the annual leave policy at SWS AI?">
+                                📋 Annual leave policy
+                            </button>
+                            <button class="suggestion-chip" data-query="What is the password policy for company systems?">
+                                🔒 Password policy
+                            </button>
+                            <button class="suggestion-chip" data-query="What are the WFH guidelines?">
+                                🏠 WFH guidelines
+                            </button>
+                            <button class="suggestion-chip" data-query="What is the notice period for resignation?">
+                                📝 Resignation notice period
+                            </button>
+                            <button class="suggestion-chip" data-query="How many days of sick leave do employees get?">
+                                🏥 Sick leave days
+                            </button>
+                            <button class="suggestion-chip" data-query="How are performance reviews conducted?">
+                                ⭐ Performance reviews
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Messages container -->
+                    <div class="messages-container" id="messages-container"></div>
+                </main>
+
+                <!-- Input Area -->
+                <footer class="input-area" id="input-area">
+                    <div class="input-wrapper">
+                        <div class="input-container" id="input-container">
+                            <textarea
+                                id="question-input"
+                                placeholder="Ask a question about company policies..."
+                                rows="1"
+                                maxlength="2000"
+                                aria-label="Type your question"
+                            ></textarea>
+                            <button class="btn-send" id="btn-send" title="Send message" aria-label="Send message" disabled>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="input-hint" id="input-hint">
+                            Powered by Phi-3 &middot; Answers grounded in company documents
+                        </p>
+                    </div>
+                </footer>
             </div>
 
-            <!-- Messages container -->
-            <div class="messages-container" id="messages-container"></div>
-        </main>
+            <!-- Upload Panel -->
+            <div class="panel" id="upload-panel">
+                <main class="upload-area">
+                    <div class="upload-container">
+                        <h2 class="panel-title">Upload Knowledge Documents</h2>
+                        <p class="panel-desc">Drag and drop your company policy PDF documents here. They will be processed, chunked, and embedded into the local AI database instantly.</p>
+                        
+                        <div class="drop-zone" id="drop-zone">
+                            <div class="drop-zone-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <p class="drop-zone-text">Drag & Drop PDF files here or click to select</p>
+                            <input type="file" id="file-input" class="hidden" accept=".pdf" multiple />
+                        </div>
 
-        <!-- Input Area -->
-        <footer class="input-area" id="input-area">
-            <div class="input-wrapper">
-                <div class="input-container" id="input-container">
-                    <textarea
-                        id="question-input"
-                        placeholder="Ask a question about company policies..."
-                        rows="1"
-                        maxlength="2000"
-                        aria-label="Type your question"
-                    ></textarea>
-                    <button class="btn-send" id="btn-send" title="Send message" aria-label="Send message" disabled>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </div>
-                <p class="input-hint" id="input-hint">
-                    Powered by Phi-3 &middot; Answers grounded in company documents
-                </p>
+                        <!-- Active Uploads List -->
+                        <div class="upload-list-container hidden" id="upload-list-container">
+                            <h3>Upload Queue</h3>
+                            <div class="upload-list" id="upload-list"></div>
+                        </div>
+                    </div>
+                </main>
             </div>
-        </footer>
+        </div>
     </div>
 
     <script src="script.js"></script>
