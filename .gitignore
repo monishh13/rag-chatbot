@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+.venv/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Database files
+*.sqlite3
+*.db
+chroma_db/
+
+# PDF / generated docs
+*.pdf
+*.docx
+*.xlsx
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+
+# Pytest / cache
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Ollama / model files (optional if huge)
+models/
+*.bin
+
+# Ignore uploaded/generated data
+data/
+uploads/
