@@ -15,7 +15,7 @@ class EmbeddingService:
     """Manages embedding model loading and text encoding."""
 
     _instance = None
-    _model = None
+    _model = None  # Class-level: shared across all instances
 
     def __new__(cls):
         """Singleton pattern to avoid loading the model multiple times."""
@@ -24,7 +24,8 @@ class EmbeddingService:
         return cls._instance
 
     def __init__(self):
-        if self._model is None:
+        # Guard against re-loading: check class variable, not instance variable
+        if EmbeddingService._model is None:
             self._load_model()
 
     def _load_model(self):
@@ -35,7 +36,8 @@ class EmbeddingService:
         logger.info(f"Loading embedding model: {settings.embedding_model}")
         start = time.time()
 
-        self._model = SentenceTransformer(settings.embedding_model)
+        # Assign to class variable so it persists across all future instances
+        EmbeddingService._model = SentenceTransformer(settings.embedding_model)
 
         elapsed = time.time() - start
         logger.info(f"Embedding model loaded in {elapsed:.2f}s")
@@ -56,7 +58,7 @@ class EmbeddingService:
             return []
 
         start = time.time()
-        embeddings = self._model.encode(texts, show_progress_bar=False)
+        embeddings = EmbeddingService._model.encode(texts, show_progress_bar=False)
         elapsed = time.time() - start
 
         logger.info(f"Embedded {len(texts)} texts in {elapsed:.2f}s")
@@ -82,4 +84,4 @@ class EmbeddingService:
     @property
     def dimension(self) -> int:
         """Return the embedding dimension size."""
-        return self._model.get_sentence_embedding_dimension()
+        return EmbeddingService._model.get_sentence_embedding_dimension()

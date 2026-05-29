@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional
+import asyncio
 
 from app.services.rag_service import RAGService
 from app.services.llm_service import LLMService
@@ -127,7 +128,9 @@ async def ingest():
     logger.info("Ingestion triggered via API")
 
     try:
-        stats = ingest_documents()
+        # Run the synchronous ingestion pipeline in a thread so the event loop
+        # stays free to handle other requests during what can be a long operation.
+        stats = await asyncio.to_thread(ingest_documents)
         return IngestResponse(status="success", stats=stats)
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))

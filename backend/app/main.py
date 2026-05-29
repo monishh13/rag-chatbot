@@ -6,6 +6,7 @@ Configures CORS, includes routers, and sets up startup events.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import asyncio
 
 from app.api.routes import router
 from app.core.config import get_settings
@@ -28,10 +29,10 @@ async def lifespan(app: FastAPI):
     logger.info(f"  Threshold: {settings.similarity_threshold}")
     logger.info("=" * 60)
 
-    # Pre-load the embedding model on startup
+    # Pre-load the embedding model on startup (run in thread — it's blocking I/O)
     try:
         from app.services.embedding_service import EmbeddingService
-        EmbeddingService()
+        await asyncio.to_thread(EmbeddingService)
         logger.info("Embedding model pre-loaded successfully")
     except Exception as e:
         logger.warning(f"Could not pre-load embedding model: {e}")

@@ -200,10 +200,10 @@ def ingest_documents(docs_path: str = None) -> Dict[str, Any]:
             )
             stats["total_chunks"] += len(chunks)
 
-            # Step 3: Prepare batch data
-            new_ids = []
-            new_texts = []
-            new_metadatas = []
+            # Step 3: Build all candidate IDs and text up front
+            candidate_ids = []
+            candidate_texts = []
+            candidate_metadatas = []
 
             for chunk in chunks:
                 chunk_id = generate_chunk_id(
@@ -211,16 +211,27 @@ def ingest_documents(docs_path: str = None) -> Dict[str, Any]:
                     chunk["metadata"]["chunk_index"],
                     chunk["text"],
                 )
+                candidate_ids.append(chunk_id)
+                candidate_texts.append(chunk["text"])
+                candidate_metadatas.append(chunk["metadata"])
 
-                # Step 4: Check for duplicates (idempotent ingestion)
-                existing = collection.get(ids=[chunk_id])
-                if existing["ids"]:
+            # Step 4: Single batched duplicate check — ONE query instead of N
+            existing_result = collection.get(ids=candidate_ids)
+            existing_ids = set(existing_result["ids"])
+
+            new_ids = []
+            new_texts = []
+            new_metadatas = []
+
+            for chunk_id, text, metadata in zip(
+                candidate_ids, candidate_texts, candidate_metadatas
+            ):
+                if chunk_id in existing_ids:
                     stats["skipped_chunks"] += 1
-                    continue
-
-                new_ids.append(chunk_id)
-                new_texts.append(chunk["text"])
-                new_metadatas.append(chunk["metadata"])
+                else:
+                    new_ids.append(chunk_id)
+                    new_texts.append(text)
+                    new_metadatas.append(metadata)
 
             if new_ids:
                 # Step 5: Generate embeddings (batched)
