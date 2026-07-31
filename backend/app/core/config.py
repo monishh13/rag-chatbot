@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     # ChromaDB Configuration
     chroma_db_path: str = "./chroma_db"
-    chroma_collection_name: str = "sws_documents"
+    chroma_collection_name: str = "rag_documents"
 
     # Embedding Model
     embedding_model: str = "all-MiniLM-L6-v2"
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     similarity_threshold: float = 1.2
 
     # Documents Path
-    docs_path: str = "./docs"
+    docs_path: str = "./resources"
 
     # Logging
     log_level: str = "INFO"

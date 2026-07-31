@@ -1,5 +1,5 @@
 /**
- * SWS AI RAG Chatbot — Frontend Logic
+ * AI RAG Chatbot — Frontend Logic
  * Handles chat interactions, streaming responses, source display,
  * chat history session persistence, and document uploads.
  */
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ─── LocalStorage Session Management ────────────────────────────
 function loadChatsFromStorage() {
     try {
-        const stored = localStorage.getItem("sws_chats");
+        const stored = localStorage.getItem("rag_chats");
         if (stored) {
             chats = JSON.parse(stored);
         }
@@ -75,7 +75,7 @@ function loadChatsFromStorage() {
 
 function saveChatsToStorage() {
     try {
-        localStorage.setItem("sws_chats", JSON.stringify(chats));
+        localStorage.setItem("rag_chats", JSON.stringify(chats));
     } catch (e) {
         console.error("Failed to save chats to localStorage", e);
     }

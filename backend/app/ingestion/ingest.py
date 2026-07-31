@@ -165,7 +165,7 @@ def ingest_documents(docs_path: str = None) -> Dict[str, Any]:
     chroma_client = chromadb.PersistentClient(path=settings.chroma_db_path)
     collection = chroma_client.get_or_create_collection(
         name=settings.chroma_collection_name,
-        metadata={"description": "SWS AI company documents"},
+        metadata={"description": "Internal document collection"},
     )
 
     # Track statistics
@@ -290,7 +290,7 @@ def ingest_single_document(pdf_path: str) -> Dict[str, Any]:
     chroma_client = chromadb.PersistentClient(path=settings.chroma_db_path)
     collection = chroma_client.get_or_create_collection(
         name=settings.chroma_collection_name,
-        metadata={"description": "SWS AI company documents"},
+        metadata={"description": "Internal document collection"},
     )
 
     stats = {

@@ -1,7 +1,7 @@
 # Dependencies for RAG Chatbot Backend
 fastapi==0.115.12
 uvicorn[standard]==0.34.3
-chromadb==0.6.3
+chromadb>=0.6.3
 sentence-transformers==4.1.0
 PyMuPDF==1.25.5
 langchain-text-splitters==0.3.8

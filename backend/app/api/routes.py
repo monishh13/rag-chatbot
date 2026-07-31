@@ -29,7 +29,7 @@ class ChatRequest(BaseModel):
         min_length=1,
         max_length=2000,
         description="The user's question to answer from company documents.",
-        examples=["What is the annual leave policy at SWS AI?"],
+        examples=["What is the annual leave policy?"],
     )
     stream: Optional[bool] = Field(
         default=True,

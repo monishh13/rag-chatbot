@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
 
     logger.info("=" * 60)
-    logger.info("SWS AI RAG Chatbot — Starting Up")
+    logger.info("AI RAG Chatbot — Starting Up")
     logger.info(f"  Model: {settings.ollama_model}")
     logger.info(f"  Ollama URL: {settings.ollama_base_url}")
     logger.info(f"  ChromaDB: {settings.chroma_db_path}")
@@ -39,15 +39,15 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("SWS AI RAG Chatbot — Shutting Down")
+    logger.info("AI RAG Chatbot — Shutting Down")
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="SWS AI RAG Chatbot",
+    title="AI RAG Chatbot",
     description=(
         "A Retrieval-Augmented Generation chatbot for answering "
-        "employee questions using internal company PDF documents. "
+        "questions using internal PDF documents. "
         "Powered by Phi-3 via Ollama (fully local)."
     ),
     version="1.0.0",
@@ -71,7 +71,7 @@ app.include_router(router)
 async def root():
     """Root endpoint — redirects to API documentation."""
     return {
-        "name": "SWS AI RAG Chatbot",
+        "name": "AI RAG Chatbot",
         "version": "1.0.0",
         "docs": "/docs",
         "health": "/api/health",

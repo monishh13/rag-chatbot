@@ -1,17 +1,17 @@
-# SWS AI RAG Chatbot
+# AI RAG Chatbot
 
-A privacy-focused, local **Retrieval-Augmented Generation (RAG)** system built to answer questions grounded in internal company PDF documents. Powered by **FastAPI**, **ChromaDB**, **Sentence Transformers**, and **Ollama (Phi-3)**.
+A privacy-focused, local **Retrieval-Augmented Generation (RAG)** system built to answer user questions grounded in internal PDF documents. Powered by **FastAPI**, **ChromaDB**, **Sentence Transformers**, and **Ollama (Phi-3)**.
 
 ---
 
 ## 🌟 Key Features
 
-- 🔒 **100% Local & Private**: No external API calls. Runs locally with Ollama (`phi3`) and local embedding models.
-- 📄 **PDF Processing & Ingestion**: Extract, split, and embed text from PDF documents using PyMuPDF and LangChain Text Splitters.
+- 🔒 **100% Local & Private**: No external API calls. Runs completely locally using Ollama (`phi3`) and local embeddings.
+- 📄 **PDF Ingestion & Parsing**: Extract, split, and embed text from PDF documents using PyMuPDF and LangChain Text Splitters.
 - ⚡ **Vector Search**: Fast semantic search using ChromaDB vector database with custom similarity threshold filtering.
 - 💬 **Streaming Responses**: Real-time response streaming over Server-Sent Events (SSE).
 - 📤 **Dynamic Document Upload**: Upload new PDF files directly via the API or frontend interface for instant document indexing.
-- 🎨 **Modern Frontend Interface**: Sleek UI with dark mode support, source document citations, and live health status indicators.
+- 🎨 **Modern Web Interface**: Responsive UI with dark mode support, source document citations, and live health status indicators.
 
 ---
 
@@ -44,8 +44,22 @@ rag-chatbot/
 │   ├── index.html           # Main web interface layout
 │   ├── style.css            # Custom CSS styles and UI theme
 │   └── script.js            # Client-side chat logic & streaming handlers
+├── resources/               # Directory containing dummy PDF policy documents
 └── README.md                # Project documentation
 ```
+
+---
+
+## 📚 Managing & Ingesting Documents
+
+Dummy PDF policy documents are located in the `./resources/` directory:
+- `Northfield_Data_Privacy_Policy.pdf`
+- `Northfield_Employee_Leave_Policy.pdf`
+- `Northfield_IT_Acceptable_Use_Policy.pdf`
+
+### How to Add or Update Documents
+1. **Using the UI**: Navigate to the **Upload Documents** tab in the web frontend and drop your PDF files.
+2. **Using the `resources/` folder**: Place your PDF files inside `./resources/` (or set `DOCS_PATH` in `.env`), and trigger ingestion via the API endpoint (`POST /api/ingest`).
 
 ---
 
@@ -93,13 +107,13 @@ rag-chatbot/
    OLLAMA_BASE_URL=http://localhost:11434
    OLLAMA_MODEL=phi3
    CHROMA_DB_PATH=./chroma_db
-   CHROMA_COLLECTION_NAME=sws_documents
+   CHROMA_COLLECTION_NAME=rag_documents
    EMBEDDING_MODEL=all-MiniLM-L6-v2
    CHUNK_SIZE=500
    CHUNK_OVERLAP=50
    TOP_K=5
    SIMILARITY_THRESHOLD=1.2
-   DOCS_PATH=./docs
+   DOCS_PATH=./resources
    LOG_LEVEL=INFO
    ```
 
@@ -113,7 +127,7 @@ rag-chatbot/
 
 ### Frontend Setup
 
-1. Open `frontend/index.html` in your web browser, or serve it using any HTTP server (e.g. VS Code Live Server or Python's `http.server`):
+1. Open `frontend/index.html` in your web browser, or serve it using any HTTP server:
    ```bash
    cd frontend
    python -m http.server 3000
@@ -126,11 +140,11 @@ rag-chatbot/
 
 - **`POST /api/chat`**: Send a user question and receive a grounded answer with source document references (supports streaming).
 - **`POST /api/upload`**: Upload a new `.pdf` document to dynamically ingest into ChromaDB.
-- **`POST /api/ingest`**: Bulk ingest all PDF files placed inside the configured `docs/` directory.
+- **`POST /api/ingest`**: Ingest all PDF files from the configured `resources/` directory.
 - **`GET /api/health`**: Check system health, Ollama connection status, and ChromaDB document chunk count.
 
 ---
 
 ## 📄 License
 
-This project is open-source and intended for internal document Q&A application reference.
+This project is open-source and intended as a generic RAG chatbot template.
